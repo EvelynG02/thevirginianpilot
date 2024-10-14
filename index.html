@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Virginian-Pilot</title>
+  
+  <link rel="stylesheet" href="https://use.typekit.net/idh3bfk.css">
+
+  <style>
+    
+    body {
+      text-align: center;
+      padding: 20px;
+    }
+
+    .font-sample {
+      font-size: 4rem;
+      transition: all 0.3s;
+        font-family: "luke-variable", sans-serif;
+    font-variation-settings: "LINE" 100, "FILL" 100;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Control the Variable Font</h1>
+  
+  <div class="font-sample" id="fontSample">
+    The Virginian-Pilot
+  </div>
+
+  <label for="fontWeightSlider">Font Weight: </label>
+  <input type="range" id="fontWeightSlider" min="10" max="900" value="400">
+  <br>
+
+  <label for="strokeWidthSlider">Stroke Width: </label>
+  <input type="range" id="strokeWidthSlider" min="0" max="5" value="0">
+  <br>
+
+  <label for="fontColorPicker">Font Color: </label>
+  <input type="color" id="fontColorPicker" value="#000000">
+  <br>
+
+  <label for="strokeColorPicker">Stroke Color: </label>
+  <input type="color" id="strokeColorPicker" value="#000000">
+  <br>
+
+  <script>
+    const fontSample = document.getElementById('fontSample');
+    const fontWeightSlider = document.getElementById('fontWeightSlider');
+    const strokeWidthSlider = document.getElementById('strokeWidthSlider');
+    const fontColorPicker = document.getElementById('fontColorPicker');
+    const strokeColorPicker = document.getElementById('strokeColorPicker');
+
+    // Update the font properties based on user input
+    fontWeightSlider.addEventListener('input', () => {
+      fontSample.style.fontVariationSettings = `'wght' ${fontWeightSlider.value}`;
+    });
+
+    strokeWidthSlider.addEventListener('input', () => {
+      fontSample.style.webkitTextStrokeWidth = `${strokeWidthSlider.value}px`;
+    });
+
+    fontColorPicker.addEventListener('input', () => {
+      fontSample.style.color = fontColorPicker.value;
+    });
+
+    strokeColorPicker.addEventListener('input', () => {
+      fontSample.style.webkitTextStrokeColor = strokeColorPicker.value;
+    });
+  </script>
+</body>
+</html>
