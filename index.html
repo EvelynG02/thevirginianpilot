@@ -1,106 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Virginian-Pilot</title>
-  
-  <link rel="stylesheet" href="https://use.typekit.net/idh3bfk.css">
-
-  <style>
-    
-    body {
-      text-align: center;
-      padding: 20px;
-    }
-
-    .font-sample {
-      font-size: 4rem;
-      transition: all 0.3s;
-        font-family: "luke-variable", sans-serif;
-    font-variation-settings: "LINE" 100, "FILL" 100;
-
-    -webkit-text-stroke-width: 0px;
-      -webkit-text-stroke-color: #000;
-    }
-    .slider {
-      width: 300px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather-Based Variable Font</title>
+    <link rel="stylesheet" href="https://use.typekit.net/idh3bfk.css">
+    <style>
+        body {
+            font-family: 'Luke-Variable', sans-serif;
+            text-align: center;
+            margin: 20px;
+            font-family: "luke-variable", sans-serif;
+font-variation-settings: "LINE" 100, "FILL" 100;
+        }
+        #weatherSample {
+            font-size: 7rem;
+            margin: 20px 0;
+            -webkit-text-stroke: 1px black;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Control the Variable Font</h1>
-  
-  <div class="font-sample" id="fontSample"style="font-variation-settings: 'fill' 100, 'line' 100;">
-    The Virginian-Pilot
-  </div>
 
-    <!-- Sliders for Fill and Line -->
-    <label for="fillSlider">Fill (100-300): </label>
-    <input type="range" id="fillSlider" min="100" max="300" value="100"class="slider">
-    <br>
-  
-    <label for="lineSlider">Line (100-300): </label>
-    <input type="range" id="lineSlider" min="100" max="300" value="100"class="slider">
-    <br>
-  
-  <label for="fontWeightSlider">Font Weight: </label>
-  <input type="range" id="fontWeightSlider" min="10" max="900" value="400"class="slider">
-  <br>
+<h1>Weather-Based Variable Font</h1>
 
-  <label for="strokeWidthSlider">Stroke Width: </label>
-  <input type="range" id="strokeWidthSlider" min="0" max="5" value="0"class="slider">
-  <br>
 
-  <label for="fontColorPicker">Font Color: </label>
-  <input type="color" id="fontColorPicker" value="#000000">
-  <br>
+<div id="weatherSample">Weather Data: Loading...</div>
 
-  <label for="strokeColorPicker">Stroke Color: </label>
-  <input type="color" id="strokeColorPicker" value="#000000">
-  <br>
 
-  <script>
-    const fontSample = document.getElementById('fontSample');
-    const fillSlider = document.getElementById('fillSlider');
-    const lineSlider = document.getElementById('lineSlider');
-    const strokeWidthSlider = document.getElementById('strokeWidthSlider');
-    const strokeColorPicker = document.getElementById('strokeColorPicker');
-    const fillColorPicker = document.getElementById('fillColorPicker');
+<script>
+    const weatherSample = document.getElementById('weatherSample');
 
-    // Update the font's variable axes: 'fill' and 'line'
-    function updateFontVariation() {
-        const fillValue = fillSlider.value;
-        const lineValue = lineSlider.value;
-        fontSample.style.fontVariationSettings = `'wght' 400, 'fill' ${fillValue}, 'line' ${lineValue}`;
+
+    const url = 'https://open-weather13.p.rapidapi.com/city/Hampton/EN';
+    const options = {
+        method: 'GET',
+        headers: {
+            'x-rapidapi-key': '5097d12d39mshdb1ddd6d5d5d5a9p166743jsn840f6a4ac518',
+            'x-rapidapi-host': 'open-weather13.p.rapidapi.com'
+        }
+    };
+
+
+    // Function to map temperature to a rainbow color (from purple to red)
+    function temperatureToColor(temp) {
+        const maxTemp = 100;
+        const minTemp = 0;
+        const colors = ['#800080', '#4B0082', '#0000FF', '#00FF00', '#FFFF00', '#FFA500', '#FF0000'];
+       
+        const index = Math.min(
+            Math.floor(((temp - minTemp) / (maxTemp - minTemp)) * (colors.length - 1)),
+            colors.length - 1
+        );
+
+
+        return colors[index];
     }
 
-    // Update stroke width
-    function updateStroke() {
-        const strokeWidth = strokeWidthSlider.value;
-        fontSample.style.webkitTextStrokeWidth = `${strokeWidth}px`;
+
+    // Function to map wind speed to stroke width
+    function windSpeedToStroke(windSpeed) {
+        const maxWindSpeed = 30; // Adjust based on typical max wind speeds
+        const strokeWidth = Math.min(Math.max(windSpeed / maxWindSpeed, .10), 1000); // Stroke from 0.1 to 1
+        return strokeWidth;
     }
 
-    // Update stroke color
-    function updateStrokeColor() {
-        const strokeColor = strokeColorPicker.value;
-        fontSample.style.webkitTextStrokeColor = strokeColor;
+
+    async function fetchWeather() {
+        try {
+            const response = await fetch(url, options);
+            const data = await response.json();
+            const temperature = data.main.temp;
+            const windSpeed = data.wind.speed;
+
+
+            weatherSample.innerHTML = `The Virginian Pilot`;
+
+
+            // Update font color based on temperature
+            const fillColor = temperatureToColor(temperature);
+            weatherSample.style.color = fillColor;
+
+
+            // Update stroke width based on wind speed
+            const strokeWidth = windSpeedToStroke(windSpeed);
+            weatherSample.style.webkitTextStrokeWidth = `${strokeWidth * 10}px`;
+        } catch (error) {
+            weatherSample.innerHTML = 'Error fetching weather data';
+            console.error(error);
+        }
     }
 
-    // Update fill color
-    function updateFillColor() {
-        const fillColor = fillColorPicker.value;
-        fontSample.style.color = fillColor;
-    }
 
-    // Add event listeners for the sliders and color pickers
-    fillSlider.addEventListener('input', updateFontVariation);
-    lineSlider.addEventListener('input', updateFontVariation);
-    strokeWidthSlider.addEventListener('input', updateStroke);
-    strokeColorPicker.addEventListener('input', updateStrokeColor);
-    fillColorPicker.addEventListener('input', updateFillColor);
+    // Fetch weather data on page load
+    fetchWeather();
 </script>
+
 
 </body>
 </html>
+
+
